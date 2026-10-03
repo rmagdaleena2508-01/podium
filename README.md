@@ -4,7 +4,7 @@ A small website for pitch competitions, hackathons and case contests. Teams put
 their deck here, the whole room reads it on their phones, the room votes, and
 the winners go up on a podium page that stays online.
 
-**Live:** https://rmagdaleena2508-01.github.io/OLTA---VOTE-YOUR-PPT/
+**Live:** https://rmagdaleena2508-01.github.io/podium/
 **Version:** v1 — the whole flow runs in the browser. See [What's in v1](#whats-in-v1).
 **Backend:** Supabase project `podium` (Mumbai, free plan), schema and policies applied.
 
@@ -592,7 +592,7 @@ browser.
 ## Hosting: GitHub Pages
 
 The site is live at
-**https://rmagdaleena2508-01.github.io/OLTA---VOTE-YOUR-PPT/**
+**https://rmagdaleena2508-01.github.io/podium/**
 
 It is served by GitHub Pages straight from the `main` branch, root folder. There
 is no build step, so a push is a deploy: commit, push, and the new version is up
@@ -649,7 +649,7 @@ git commit -m "what changed"
 git push
 ```
 
-Then check https://rmagdaleena2508-01.github.io/OLTA---VOTE-YOUR-PPT/ — hard
+Then check https://rmagdaleena2508-01.github.io/podium/ — hard
 reload once with Cmd-Shift-R if you are looking for a change you just made.
 
 To see it locally before pushing:

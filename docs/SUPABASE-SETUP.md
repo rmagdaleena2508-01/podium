@@ -49,7 +49,7 @@ Every statement is guarded, so running a file twice is harmless.
    `https://<project-ref>.supabase.co/auth/v1/callback`.
 4. Paste the client id and secret into Supabase and save.
 5. **Authentication, URL Configuration.** Site URL is
-   `https://rmagdaleena2508-01.github.io/OLTA---VOTE-YOUR-PPT/`. Add
+   `https://rmagdaleena2508-01.github.io/podium/`. Add
    `http://localhost:8793` as an additional redirect URL so local work keeps
    working.
 

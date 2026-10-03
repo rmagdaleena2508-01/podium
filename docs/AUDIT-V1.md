@@ -98,7 +98,7 @@ Each one changes what gets built, so none of them are mine to make.
    winners kept for good.
 7. **Money.** Confirmed off the platform for good, or is a fee-on-Podium ever on
    the table? Everything in the copy currently promises never.
-8. **Domain and name.** The repo is `OLTA---VOTE-YOUR-PPT`, the product is
+8. **Domain and name.** The repo is `podium`, the product is
    Podium, and the footer mail is `hello@podium.app`. Three names, one product.
 
 ---
