@@ -1,60 +1,215 @@
 # Podium — show your slides, win the room
 
-Podium is a small website for pitch competitions, hackathons and case contests —
-anywhere a team builds a deck and wants it judged fairly. Teams upload their pitch
-deck, the whole room reads it on their phone, and the room votes. When voting
-closes, the winners go up on a results page that stays online.
-
-The point is a fair shot. Today a panel of three judges decides in ten minutes.
-Podium puts the deck in front of everyone who showed up, so the idea gets read by
-the people it was made for.
+A small website for pitch competitions, hackathons and case contests. Teams put
+their deck here, the whole room reads it on their phones, the room votes, and
+the winners go up on a podium page that stays online.
 
 **Live:** https://rmagdaleena2508-01.github.io/OLTA---VOTE-YOUR-PPT/
 **Version:** v1 — the whole flow runs in the browser. See [What's in v1](#whats-in-v1).
 **Backend:** Supabase project `podium` (Mumbai, free plan), schema and policies applied.
 
+![The landing page](docs/screenshots/01-landing.png)
+
 ---
 
-## Why I am building this
+## 1. The problem I am solving
 
-Most Indian college competitions run on slide decks. The contest itself works fine.
-The mess is everything around it.
+Most college competitions are won or lost on a slide deck. The contest itself is
+fine. Everything around it is a mess.
 
-Here is how a normal fest goes today:
+Here is how a normal event goes today:
 
-1. Teams mail their PPT, or drop it in a WhatsApp group.
-2. Half the files never arrive. Someone renames `final_v2_FINAL.pptx` and the wrong
-   one gets judged.
-3. Only the judges ever see the decks. The 200 people in the hall see nothing.
-4. Voting happens on paper slips, or by clapping, or by a show of hands.
-5. Nobody trusts the count. There is always one team that thinks it was rigged.
-6. A week later, no record is left. No decks, no scores, no winners page.
+1. Teams send their deck on WhatsApp or by email.
+2. Some files never arrive. Someone opens `final_v2_FINAL.pptx` and judges the
+   wrong one.
+3. Only three judges ever see the decks. The 200 people sitting in the hall see
+   nothing.
+4. Voting happens on paper slips, by clapping, or by raised hands.
+5. Nobody believes the count. There is always one team that thinks it was fixed.
+6. A week later nothing is left. No decks, no scores, no winners page.
 
-So I am not building a competition platform. I am building the missing middle:
-**one place where the decks live, and one honest way to vote on them.**
+So the work is not the contest. The work is the hour around it.
 
-## What Podium does not do
+## 2. My main idea
 
-This part matters as much as the feature list.
+**Put every deck in one place, and let the whole room vote on it.**
 
-Sign-ups, entry fees and payment proof stay **off** this site. In a real fest, the
-poster already carries a Google Form and a UPI QR code. People fill the form, pay,
-and upload their screenshot there. The organiser checks it there. That flow already
-works, costs nothing, and needs no bank account or compliance work from me.
+That is the whole product. Not a competition platform, not an event manager —
+the missing middle:
 
-Podium starts one step later. A team arrives with an event code, uploads a deck, and
-the room votes. The only line about money on the whole site says where money is not.
+- One link where every deck lives.
+- One honest way to vote, with rules the website cannot bend.
+- One results page that stays up afterwards.
 
-## Who uses it
+Three rules hold it together:
 
-| Person | What they do |
-|---|---|
-| **Organiser** | Creates the event, gets a code to print on the poster, lets decks in, opens and closes voting, announces winners. |
-| **Participant** | Types the event code, uploads one deck, watches the result. |
-| **Voter** | Anyone in the hall. Signs in with Google, reads the decks, votes once. |
+1. You can back as many decks as you like, but only **once each**.
+2. A vote is **final**. No taking it back, so nobody can be talked into
+   switching in the last ten minutes.
+3. **No counts are shown** to anyone until the organiser closes voting. Only the
+   organiser sees numbers while it runs.
 
-Organisers are not a public sign-up. They get in through an invite link, because
-handing out organiser rights is a bigger deal than joining an event.
+## 3. How I got to this idea
+
+I was looking at how these events actually run, not at how software usually
+describes them.
+
+- The poster already does a lot. It carries the rules, the Google Form and the
+  payment QR code. Teams sign up there and pay there. That part works, so I do
+  not touch it.
+- The judges are not the problem either. The problem is that **the audience has
+  nothing to do**. Two hundred people sit and watch three people decide.
+- Everyone in that room already has a phone, and the deck is already a PDF.
+
+So the gap is narrow and clear: between "the team registered on the poster" and
+"somebody announces a winner", there is nothing. Podium is only that gap. It
+starts when a team arrives with an event code, and it ends when the podium page
+is live.
+
+I also went and read how the big ones handle voting — Product Hunt, Devpost,
+Devfolio, DoraHacks, Unstop — and took their rules rather than their looks.
+Those sources are in [`docs/MARKET-RESEARCH.md`](docs/MARKET-RESEARCH.md).
+
+## 4. What I have built so far
+
+Six screens, working end to end in the browser.
+
+### The deck wall
+
+Every deck as a card: the team's initials on a coloured cover, the team name,
+college, one line about the idea, its group, and one vote button. Filter chips
+per group, a search box, and a sort. The round upload button sits bottom right.
+
+![The deck wall](docs/screenshots/02-deck-wall.png)
+
+### The results page
+
+When voting closes, the page becomes a podium: the winner in the middle and
+raised, second on the left, third on the right, with gold, silver and bronze
+banners. Below it, every other deck in order, and a CSV for the organiser.
+
+![The results page](docs/screenshots/03-results.png)
+
+### The organiser's dashboard
+
+Not a wall of charts — a short list of jobs. What stage the event is in, the
+buttons that make sense right now, four counts, the decks to let in or hide, the
+standings, and the message to paste into the team WhatsApp group with a QR code
+of the wall.
+
+![The organiser dashboard](docs/screenshots/04-dashboard.png)
+
+### Setting up an event
+
+Banner, name, date, where, the link to the organiser's own sign-up form, deck
+rules, the voting window, and whether the event is listed or code-only. A live
+preview of the card teams will see sits beside it, with the six-character code.
+
+![Setting up an event](docs/screenshots/05-create-event.png)
+
+### Signing in
+
+Two steps. Sign in, then say whether you came to submit a deck or to browse and
+vote, and add your name and college. Organisers skip the question and go
+straight to setting up their event.
+
+![Signing in](docs/screenshots/06-sign-in.png)
+
+> The screenshots use made-up teams so the screens are not empty. The live site
+> shows nothing until a real organiser sets up a real event.
+
+## 5. How it is put together, and what comes next
+
+### Today
+
+```mermaid
+flowchart LR
+  A[Phone or laptop] --> B[GitHub Pages<br/>plain HTML, CSS, JS]
+  B --> C[(Browser storage<br/>events, decks, votes)]
+  B -. ready, not used yet .-> D[(Supabase<br/>Postgres + sign-in + policies)]
+```
+
+Everything runs in the browser. No build step, no server. The Supabase project
+is created and the rules are loaded into it, but no screen reads from it yet, so
+the site keeps working while it is being wired up one screen at a time.
+
+### Where it is going
+
+```mermaid
+flowchart TB
+  subgraph Browser
+    P[Podium pages<br/>GitHub Pages]
+  end
+  subgraph Supabase
+    AU[Sign in with Google]
+    DB[(Postgres:<br/>events, decks, votes,<br/>members, results)]
+    RLS[Row-level rules:<br/>who may read and write]
+  end
+  subgraph Cloudflare
+    R2[(R2 files:<br/>deck pages, posters)]
+  end
+  P --> AU
+  P --> DB
+  DB --- RLS
+  P --> R2
+  W[Upload worker:<br/>PDF to page images] --> R2
+  W --> DB
+  P --> W
+```
+
+**Why this shape.** The two rules that matter cannot live in a browser. "One
+vote per deck" is a unique line in the database:
+`unique (event_id, voter_id, deck_id)` — a second vote cannot be saved, whatever
+the browser sends. "No counts before the close" is a read rule the database
+applies to everyone except the organiser. A rule the console can edit is not a
+rule.
+
+**What each part does**
+
+| Part | Job | Why this one |
+|---|---|---|
+| GitHub Pages | Serves the pages | Free, HTTPS, no build step. A push is a deploy |
+| Supabase | Database, sign-in, rules | The only free tier with Postgres, sign-in and row-level security in one place |
+| Cloudflare R2 | Deck files and images | 10 GB and no charge for traffic out, which matters when 300 phones open decks at once |
+| A small worker | Turns a PDF into page images | The wall shows pictures, so nobody can download the original |
+
+**The order of work from here**
+
+1. Sign in with Google, and a profile row for each person.
+2. Move the deck wall onto the database: real decks, real votes, real counts.
+3. Turn uploaded PDFs into page images, and store the real page count.
+4. Move files to R2, with originals deleted after 90 days by a bucket rule.
+5. Teams and Voters lists for the organiser, with CSV.
+6. An event page with the poster, the dates and a countdown.
+7. A share card for winners, sized for Instagram stories.
+
+The full plan, including the security holes to close first, is in
+[`docs/BUILD-PLAN.md`](docs/BUILD-PLAN.md).
+
+### Run it on your machine
+
+```bash
+python3 -m http.server 8793 --directory deck-comp
+```
+
+Then open http://localhost:8793.
+
+### Where things live
+
+| What | File |
+| --- | --- |
+| Landing page | `index.html` |
+| Sign in | `onboarding.html` |
+| Set up an event | `create-event.html` |
+| The deck wall | `event.html` |
+| Organiser dashboard | `dashboard.html` |
+| Results and podium | `results.html` |
+| Every component and token | `styles.css` |
+| All behaviour | `app.js` |
+| Database calls | `supabase-client.js` |
+| Keys the browser may hold | `config.js` |
+| Tables and rules | `supabase/*.sql` |
+| Research and plans | `docs/` |
 
 ---
 
@@ -79,6 +234,15 @@ handle the same problem. Sources are in [`docs/MARKET-RESEARCH.md`](docs/MARKET-
   has to ship a page explaining it. If a voting system needs a manual, it will
   lose a hall full of students.
 
+## How a code reaches a team
+
+Teams register on the organiser's own poster, which circulated on WhatsApp long
+before the Podium event existed. So the code cannot live on that poster. The
+dashboard hands the organiser a message to paste into the event's WhatsApp
+group — event name, wall link, code, file rules and the voting deadline — plus a
+QR of the wall they can attach. The poster itself is kept only so a team can tap
+it on the wall and re-read the rules.
+
 ## How event codes work
 
 The organiser prints a six-character code on the poster. Someone types it on the
@@ -96,161 +260,15 @@ Full design, including the lookup endpoint and the database tables:
 
 ---
 
-## Design principles
+## File rules for uploads
 
-I studied [notchowl.com](https://www.notchowl.com), [Luma](https://lu.ma) and
-[Clerk](https://clerk.com) and pulled out the rules that make them feel expensive.
-The long version is in [`docs/DESIGN-NOTES.md`](docs/DESIGN-NOTES.md). The short
-version:
-
-1. **One idea per screen.** One headline, two lines of text, one thing to click.
-2. **Space is the luxury.** Sections breathe at 96–144px. Empty room reads as
-   confidence; a packed page reads as cheap.
-3. **Hierarchy comes from size and weight, never decoration.** Five type sizes do
-   the whole site.
-4. **Tighten big type.** Every heading over 36px is tracked in by about -0.03em.
-   This one detail is most of the "premium" feeling. Untracked big type looks like
-   a default template.
-5. **Lines, not shadows.** Cards are a 1px hairline over a flat surface. Shadows
-   only appear where something really floats, like the menu.
-6. **One accent colour, one job.** Orange means "vote". It never means "new" or
-   "warning", because then it would mean nothing.
-7. **Plain words.** Short sentences, everyday verbs, real numbers instead of
-   adjectives. "25 MB" beats "generous file limits".
-8. **Name the action, not the object.** The organiser's list says "Teams to let in",
-   not "Registrations".
-
-## Where the look comes from
-
-| Source | What I took |
-|---|---|
-| **notchowl.com** | The whole type and spacing system: near-single font family, tight tracking, hairline cards, no shadows, huge section padding, and the two-beat headline shape ("Less switching. More doing."). |
-| **Luma** | How to ask someone who they are. Luma never shows a role form; it splits at the button — "Create Your First Event" or "Discover Events". Podium does the same with "Upload a deck" and "Browse and vote". |
-| **Clerk** | Proof that a light theme can look sharp: off-white page, near-black text, 64px headline at -1.6px tracking. |
-| **A hero reference shot** | Full-bleed photo, small pill above the headline, one line in a serif italic, and a single capsule holding an input and its button. |
-| **Product Hunt, Devpost, Devfolio, Unstop** | The voting and file rules, not the visuals. |
-
----
-
-## Design decisions, and what I chose against
-
-**Light theme, not dark.**
-The first build was near-black. It looked good and said nothing about a college fest.
-A warm off-white (`#f6f6f4`) with a faint dot grid feels like paper, which is what
-this product is really about. Pure white was too harsh; the warm grey holds the
-photo better.
-
-**Satoshi for headings, Geist for everything else.**
-Geist alone was correct but cold — it is a developer-tool typeface, and the hero
-photograph is warm. Satoshi has rounder, friendlier shapes and still holds tight
-tracking at 68px. Geist stays for body and interface text, where it is better at
-13–18px. One line of the headline is Instrument Serif italic — one moment of
-character, without adding a third family everywhere.
-
-**A photograph behind the words, not in a card.**
-The earlier version put the photo in a framed box below the headline. That reads as
-a screenshot of something else. Behind the text, full bleed, the photo sets a mood in
-the first half second. A radial glow sits behind the words so black text stays
-readable, and only a thin gradient closes the seam at the bottom.
-
-**Plain HTML, CSS and JavaScript — no React, no build step.**
-The whole front end is three files. There is no framework, no bundler, no
-`node_modules`. It loads instantly on a college Wi-Fi, deploys by pushing to GitHub
-Pages, and anyone can open `index.html` and read it. React earns its keep when there
-is real state to manage. The deck wall holds some now — decks, filters, votes —
-and plain JavaScript still carries it without strain. The moment to reconsider is
-when real accounts and a server arrive, not before.
-
-**Slides are shown as images, not handed over as files.**
-Teams worry about their idea being copied. So the original PPTX is kept private, the
-deck is turned into images, and the gallery shows pictures with the team name on
-them. Downloads stay off unless the organiser turns them on. This also makes the
-page fast on a phone.
-
-**The menu is a button, not a row of links.**
-A three-line button keeps the header to three items: name, sign-in, menu. The panel
-unfolds like a sheet of paper let go from the top edge — two panels hinged with
-`transform-origin: top center`, starting at `rotateX(-92deg)` inside a parent that
-holds the `perspective`. Pure CSS. Libraries like GSAP or Framer Motion would do it
-too, but adding a runtime for one panel is a bad trade.
-
-**Two onboarding steps, not three.**
-It started as sign in, pick a role, fill a profile. Role and profile now share one
-screen, and the fields only appear after a role is picked. The landing page already
-knows what you came for, so the right card is pre-selected when you arrive.
-
----
-
-## How it is built
-
-```
-index.html        the landing page
-onboarding.html   sign in, pick a role, finish a profile
-create-event.html the organiser screen: banner, basics, deck rules, voting
-event.html        the deck wall: every deck, filters, upload, viewer, voting
-dashboard.html    the organiser's screen: let decks in, open and close voting
-results.html      the podium, the rest of the field, copy and CSV
-
-The three signed-in screens share one header: wordmark, the event you are in,
-Wall / Dashboard / Settings, and your name. Dashboard and Settings only appear
-for whoever runs the event.
-styles.css        design tokens and every component
-app.js            menu, scroll reveals, event code, onboarding steps
-assets/           hero-desktop.jpg (16:9), hero-mobile.jpg (4:5),
-                  icon.svg and the PNG icon sizes
-docs/             the research and design notes behind the decisions
-```
-
-No dependencies. Two web fonts, loaded from Fontshare and Google Fonts.
-
-### Run it
-
-```bash
-python3 -m http.server 8793 --directory deck-comp
-```
-
-Open http://localhost:8793.
-
-### Design tokens
-
-All of these live at the top of `styles.css`:
-
-| Token | Value | Used for |
-|---|---|---|
-| `--bg` | `#f6f6f4` | page |
-| `--surface` | `#ffffff` | cards |
-| `--text` | `#131316` | headings and body |
-| `--text-dim` | `#55555f` | supporting text |
-| `--hairline` | `rgba(18,18,20,.09)` | every border |
-| `--accent` | `#e2572c` | the vote action only |
-| `--dot` | `rgba(18,18,20,.11)` | the background grid |
-
-### The mark
-
-The wordmark is the app icon itself: three podium blocks, the winner's block
-taller and in the accent orange, on a cream squircle. It is inline SVG, so it
-stays sharp at any size and needs no request. `assets/icon.svg` is the same
-drawing as a file, and the PNGs beside it cover the browser tab and the iOS home
-screen.
-
-### Hero rules
-
-- The hero image is a background. It sits behind the headline, full bleed, with a
-  light veil. It never goes in a framed card below the text.
-- Desktop uses the 16:9 file, phones swap to the 4:5 file at 720px.
-- No invented demo events anywhere on the page. Neutral labels until real events
-  exist.
-
----
-
-## How a code reaches a team
-
-Teams register on the organiser's own poster, which circulated on WhatsApp long
-before the Podium event existed. So the code cannot live on that poster. The
-dashboard hands the organiser a message to paste into the event's WhatsApp
-group — event name, wall link, code, file rules and the voting deadline — plus a
-QR of the wall they can attach. The poster itself is kept only so a team can tap
-it on the wall and re-read the rules.
+- PDF or PPTX. PDF is safer — fonts and layout stay exactly as the team made them.
+- 25 MB per file. Unstop's own rounds cap at 20 MB and Devpost at 35 MB, so this
+  sits between two real-world limits.
+- 15 slides by default, which an organiser can change.
+- Decks stay public for 30 days after the event, then only the team and the
+  organiser can see them. The original files are deleted at 90 days. Winning decks
+  stay on the results page for good.
 
 ## What's in v1
 
@@ -640,15 +658,90 @@ To see it locally before pushing:
 python3 -m http.server 8793 --directory deck-comp
 ```
 
-## File rules for uploads
+## Design principles
 
-- PDF or PPTX. PDF is safer — fonts and layout stay exactly as the team made them.
-- 25 MB per file. Unstop's own rounds cap at 20 MB and Devpost at 35 MB, so this
-  sits between two real-world limits.
-- 15 slides by default, which an organiser can change.
-- Decks stay public for 30 days after the event, then only the team and the
-  organiser can see them. The original files are deleted at 90 days. Winning decks
-  stay on the results page for good.
+I studied [notchowl.com](https://www.notchowl.com), [Luma](https://lu.ma) and
+[Clerk](https://clerk.com) and pulled out the rules that make them feel expensive.
+The long version is in [`docs/DESIGN-NOTES.md`](docs/DESIGN-NOTES.md). The short
+version:
+
+1. **One idea per screen.** One headline, two lines of text, one thing to click.
+2. **Space is the luxury.** Sections breathe at 96–144px. Empty room reads as
+   confidence; a packed page reads as cheap.
+3. **Hierarchy comes from size and weight, never decoration.** Five type sizes do
+   the whole site.
+4. **Tighten big type.** Every heading over 36px is tracked in by about -0.03em.
+   This one detail is most of the "premium" feeling. Untracked big type looks like
+   a default template.
+5. **Lines, not shadows.** Cards are a 1px hairline over a flat surface. Shadows
+   only appear where something really floats, like the menu.
+6. **One accent colour, one job.** Orange means "vote". It never means "new" or
+   "warning", because then it would mean nothing.
+7. **Plain words.** Short sentences, everyday verbs, real numbers instead of
+   adjectives. "25 MB" beats "generous file limits".
+8. **Name the action, not the object.** The organiser's list says "Teams to let in",
+   not "Registrations".
+
+## Where the look comes from
+
+| Source | What I took |
+|---|---|
+| **notchowl.com** | The whole type and spacing system: near-single font family, tight tracking, hairline cards, no shadows, huge section padding, and the two-beat headline shape ("Less switching. More doing."). |
+| **Luma** | How to ask someone who they are. Luma never shows a role form; it splits at the button — "Create Your First Event" or "Discover Events". Podium does the same with "Upload a deck" and "Browse and vote". |
+| **Clerk** | Proof that a light theme can look sharp: off-white page, near-black text, 64px headline at -1.6px tracking. |
+| **A hero reference shot** | Full-bleed photo, small pill above the headline, one line in a serif italic, and a single capsule holding an input and its button. |
+| **Product Hunt, Devpost, Devfolio, Unstop** | The voting and file rules, not the visuals. |
+
+---
+
+## Design decisions, and what I chose against
+
+**Light theme, not dark.**
+The first build was near-black. It looked good and said nothing about a college fest.
+A warm off-white (`#f6f6f4`) with a faint dot grid feels like paper, which is what
+this product is really about. Pure white was too harsh; the warm grey holds the
+photo better.
+
+**Satoshi for headings, Geist for everything else.**
+Geist alone was correct but cold — it is a developer-tool typeface, and the hero
+photograph is warm. Satoshi has rounder, friendlier shapes and still holds tight
+tracking at 68px. Geist stays for body and interface text, where it is better at
+13–18px. One line of the headline is Instrument Serif italic — one moment of
+character, without adding a third family everywhere.
+
+**A photograph behind the words, not in a card.**
+The earlier version put the photo in a framed box below the headline. That reads as
+a screenshot of something else. Behind the text, full bleed, the photo sets a mood in
+the first half second. A radial glow sits behind the words so black text stays
+readable, and only a thin gradient closes the seam at the bottom.
+
+**Plain HTML, CSS and JavaScript — no React, no build step.**
+The whole front end is three files. There is no framework, no bundler, no
+`node_modules`. It loads instantly on a college Wi-Fi, deploys by pushing to GitHub
+Pages, and anyone can open `index.html` and read it. React earns its keep when there
+is real state to manage. The deck wall holds some now — decks, filters, votes —
+and plain JavaScript still carries it without strain. The moment to reconsider is
+when real accounts and a server arrive, not before.
+
+**Slides are shown as images, not handed over as files.**
+Teams worry about their idea being copied. So the original PPTX is kept private, the
+deck is turned into images, and the gallery shows pictures with the team name on
+them. Downloads stay off unless the organiser turns them on. This also makes the
+page fast on a phone.
+
+**The menu is a button, not a row of links.**
+A three-line button keeps the header to three items: name, sign-in, menu. The panel
+unfolds like a sheet of paper let go from the top edge — two panels hinged with
+`transform-origin: top center`, starting at `rotateX(-92deg)` inside a parent that
+holds the `perspective`. Pure CSS. Libraries like GSAP or Framer Motion would do it
+too, but adding a runtime for one panel is a bad trade.
+
+**Two onboarding steps, not three.**
+It started as sign in, pick a role, fill a profile. Role and profile now share one
+screen, and the fields only appear after a role is picked. The landing page already
+knows what you came for, so the right card is pre-selected when you arrive.
+
+---
 
 ## Notes to myself
 
