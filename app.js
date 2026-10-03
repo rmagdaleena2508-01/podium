@@ -1293,10 +1293,12 @@ function currentProfile() {
   let event = store.read('podium.event', null);
   let decks = store.read('podium.decks', []);
 
-  /* Votes live per voter in the browser today. On a server this is one table,
-     and these counts come from a group-by. */
+  /* Votes are kept per voter, so the organiser's totals flatten every voter's
+     list into one. On a server this is a group-by, not a loop. */
   const raw = store.read('podium.votes', []);
-  const myVotes = Array.isArray(raw) ? raw : Object.values(raw || {}).filter(Boolean);
+  const allVotes = Array.isArray(raw)
+    ? raw
+    : Object.values(raw || {}).flatMap((list) => (Array.isArray(list) ? list : [list])).filter(Boolean);
 
   const $ = (sel) => document.querySelector(sel);
 
@@ -1319,7 +1321,7 @@ function currentProfile() {
   }
 
   function countFor(deckId) {
-    return myVotes.filter((id) => id === deckId).length;
+    return allVotes.filter((id) => id === deckId).length;
   }
 
   function save() {
@@ -1412,7 +1414,7 @@ function currentProfile() {
     $('[data-stat-decks-sub]').textContent = live.length
       ? `Newest ${when(new Date(Math.max(...live.map((d) => d.at))).toISOString())}`
       : 'Nothing uploaded yet';
-    $('[data-stat-votes]').textContent = myVotes.length;
+    $('[data-stat-votes]').textContent = allVotes.length;
     $('[data-stat-backed]').textContent = backed.length;
     $('[data-stat-backed-sub]').textContent = `of ${live.length}`;
     $('[data-stat-pending]').textContent = pending.length;
@@ -1510,10 +1512,10 @@ function currentProfile() {
 
     const rows = [
       {
-        flag: myVotes.length ? 'ok' : 'idle',
+        flag: allVotes.length ? 'ok' : 'idle',
         title: 'Votes are one per deck, and final',
-        body: myVotes.length
-          ? `${myVotes.length} vote${myVotes.length === 1 ? '' : 's'} recorded on this device. Nobody can take a vote back, so the count only ever grows.`
+        body: allVotes.length
+          ? `${allVotes.length} vote${allVotes.length === 1 ? '' : 's'} recorded on this device. Nobody can take a vote back, so the count only ever grows.`
           : 'No votes yet. Nothing to check.',
       },
       {
@@ -1770,7 +1772,9 @@ function whenSeen(el, fn) {
   const event = read('podium.event', null);
   const decks = read('podium.decks', []);
   const rawVotes = read('podium.votes', []);
-  const votes = Array.isArray(rawVotes) ? rawVotes : Object.values(rawVotes || {}).filter(Boolean);
+  const votes = Array.isArray(rawVotes)
+    ? rawVotes
+    : Object.values(rawVotes || {}).flatMap((list) => (Array.isArray(list) ? list : [list])).filter(Boolean);
 
   const set = (key, big, small) => {
     document.querySelector(`[data-bridge-${key}]`).textContent = big;
@@ -1787,25 +1791,19 @@ function whenSeen(el, fn) {
     { key: 'c', to: SHOWN.votes, label: 'Votes cast' },
   ];
 
-  cells.forEach(({ key, to, label }) => set(key, '0', label));
+  /* The real numbers are written first, so whatever happens to the animation —
+     a throttled tab, a stalled ticker, a browser that never fires a frame — the
+     bar is correct. The count-up only replaces them once two real frames have
+     been seen, which proves the ticker is running. */
+  cells.forEach(({ key, to, label }) => set(key, String(to), label));
 
   const move = !window.matchMedia('(prefers-reduced-motion: reduce)').matches && window.gsap;
 
-  /* Count only once the card is actually on screen, otherwise the numbers have
-     already finished by the time anyone looks at them. */
-  function run() {
-    /* A hidden tab throttles requestAnimationFrame, so a counter started there
-       would sit on its first frame. Show the real number instead and let the
-       animation belong to people who are looking. */
-    if (!move || document.hidden) {
-      cells.forEach(({ key, to }) => {
-        document.querySelector(`[data-bridge-${key}]`).textContent = String(to);
-      });
-      return;
-    }
-
+  function animate() {
     cells.forEach(({ key, to }, i) => {
       const el = document.querySelector(`[data-bridge-${key}]`);
+      el.textContent = '0';
+
       const counter = { n: 0 };
       gsap.to(counter, {
         n: to,
@@ -1817,14 +1815,24 @@ function whenSeen(el, fn) {
           el.textContent = String(Math.round(counter.n));
         },
         onComplete: () => {
-          el.textContent = String(to);   /* never leave a half-counted number */
+          el.textContent = String(to);
         },
       });
     });
 
-    if (move) {
-      gsap.from(bridge, { y: 14, opacity: 0, duration: 0.6, ease: 'power3.out' });
-    }
+    gsap.from(bridge, { y: 14, opacity: 0, duration: 0.6, ease: 'power3.out' });
+  }
+
+  function run() {
+    if (!move || document.hidden) return;         /* the numbers are already right */
+
+    let frames = 0;
+    const check = () => {
+      frames += 1;
+      if (frames < 2) return requestAnimationFrame(check);
+      if (!document.hidden) animate();
+    };
+    requestAnimationFrame(check);
   }
 
   whenSeen(bridge, run);
@@ -1847,14 +1855,14 @@ function whenSeen(el, fn) {
   const event = read('podium.event', null);
   const decks = read('podium.decks', []).filter((d) => d.status !== 'hidden');
   const rawVotes = read('podium.votes', []);
-  const votes = Array.isArray(rawVotes) ? rawVotes : Object.values(rawVotes || {}).filter(Boolean);
+  const votes = Array.isArray(rawVotes)
+    ? rawVotes
+    : Object.values(rawVotes || {}).flatMap((list) => (Array.isArray(list) ? list : [list])).filter(Boolean);
 
-  const BANNERS = {
-    1: 'linear-gradient(120deg, #f7efe2, #e8d9c2)',
-    2: 'linear-gradient(120deg, #47564a, #6f8472)',
-    3: 'linear-gradient(120deg, #c9541f, #e59264)',
-    4: 'linear-gradient(120deg, #1b1a16, #4a463c)',
-  };
+  /* Gold, silver, bronze — the same pixelated metals the landing podium uses,
+     so first, second and third are told apart by colour as well as position. */
+  const MEDAL = ['metal-gold', 'metal-silver', 'metal-bronze'];
+  const MEDAL_KEY = ['gold', 'silver', 'bronze'];
 
   const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18v-6H5l7-7 7 7h-4v6z"/></svg>';
 
@@ -1901,6 +1909,7 @@ function whenSeen(el, fn) {
   const order = [top[1], top[0], top[2]];
   const RANK_WORD = ['Second', 'Winner', 'Third'];
   const CLASS = ['second', 'first', 'third'];
+  const RANK_ORDER = [1, 0, 2];   /* which medal each position wears */
 
   const podium = document.querySelector('[data-podium]');
 
@@ -1909,7 +1918,7 @@ function whenSeen(el, fn) {
     const el = document.createElement('article');
     el.className = `place ${CLASS[i]}`;
     el.innerHTML = `
-      <div class="place-banner" style="background:${esc(BANNERS[event?.banner || 1] || BANNERS[1])}"></div>
+      <div class="place-banner metal ${MEDAL[RANK_ORDER[i]]}" data-metal="${MEDAL_KEY[RANK_ORDER[i]]}"></div>
       <p class="place-rank">${RANK_WORD[i]}</p>
       <p class="place-team">${esc(deck.team)}</p>
       <p class="place-detail">${esc([deck.college, deck.group].filter(Boolean).join(' · '))}</p>
@@ -1920,6 +1929,8 @@ function whenSeen(el, fn) {
 
   /* A tie on the top step is the one result the page must not paper over. */
   const tied = top.length > 1 && top[0].n === top[1].n && top[0].n > 0;
+
+  if (typeof paintMetals === 'function') paintMetals(podium);
 
   document.querySelector('[data-podium-note]').textContent = !ranked.length
     ? 'No decks were uploaded for this event.'
@@ -1948,7 +1959,7 @@ function whenSeen(el, fn) {
 
   /* ---- the podium lands ---- */
 
-  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches || !window.gsap;
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches || !window.gsap || document.hidden;
 
   const numbers = [...document.querySelectorAll('.place-votes b')];
 
@@ -1968,7 +1979,15 @@ function whenSeen(el, fn) {
       onUpdate: () => {
         el.textContent = String(Math.round(counter.n));
       },
+      onComplete: () => {
+        el.textContent = String(to);
+      },
     });
+
+    /* and a last resort, so a stalled ticker can never leave a zero on screen */
+    setTimeout(() => {
+      if (el.textContent !== String(to)) el.textContent = String(to);
+    }, 2500);
   }
 
   if (still) {
@@ -1982,6 +2001,16 @@ function whenSeen(el, fn) {
     const first = document.querySelector('.place.first');
 
     gsap.set('.place', { opacity: 0, y: 80 });
+
+    /* If the tab is hidden, or anything stops the timeline, the cards must not
+       be left invisible. This puts them back whatever happened. */
+    const safety = setTimeout(() => gsap.set('.place', { clearProps: 'opacity,transform' }), 2500);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        clearTimeout(safety);
+        gsap.set('.place', { clearProps: 'opacity,transform' });
+      }
+    }, { once: true });
 
     const tl = gsap.timeline({ defaults: { duration: 0.62 } });
 
@@ -2080,8 +2109,8 @@ function whenSeen(el, fn) {
    These are drawn into a tiny canvas — 16 by 6 pixels — and then scaled up by
    the browser with `image-rendering: pixelated`, which is real nearest-
    neighbour blow-up: every block is one honest pixel of the original. */
-(function pixelMetal() {
-  const banners = document.querySelectorAll('[data-metal]');
+function paintMetals(root) {
+  const banners = (root || document).querySelectorAll('[data-metal]:not([data-painted])');
   if (!banners.length) return;
 
   const METALS = {
@@ -2119,8 +2148,11 @@ function whenSeen(el, fn) {
     ctx.putImageData(px, 0, 0);
 
     el.style.backgroundImage = `url("${canvas.toDataURL('image/png')}")`;
+    el.setAttribute('data-painted', '');
   });
-})();
+}
+
+paintMetals();
 
 
 /* ---------------- the podium stage on the landing page ---------------- */
@@ -2134,7 +2166,7 @@ function whenSeen(el, fn) {
   const stage = document.querySelector('[data-stage]');
   if (!stage) return;
 
-  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches || !window.gsap;
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches || !window.gsap || document.hidden;
   if (still) return;
 
   const order = ['.stand.third', '.stand.second', '.stand.first'];
@@ -2143,6 +2175,13 @@ function whenSeen(el, fn) {
   gsap.set('.stage .stand-card', { opacity: 0, y: 26 });
 
   function run() {
+    /* the blocks and cards come back no matter what, even if the timeline is
+       interrupted by a hidden tab */
+    setTimeout(() => {
+      gsap.set('.stage .block', { clearProps: 'transform' });
+      gsap.set('.stage .stand-card', { clearProps: 'opacity,transform' });
+    }, 2500);
+
     const tl = gsap.timeline();
 
     order.forEach((sel, i) => {
