@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<!-- Source template for the 1200x630 social preview (og-image.png). Render at 1200x630 to regenerate. -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{--cream:#F5F1EA;--ink:#1B1A16;--orange:#C9541F;--muted:#6b655c}
+  html,body{width:1200px;height:630px;overflow:hidden;font-family:'Geist',system-ui,sans-serif}
+  .wrap{position:relative;width:1200px;height:630px;padding:76px 84px;background:
+      radial-gradient(900px 500px at 85% 15%, rgba(201,84,31,.10), transparent 60%),
+      var(--cream);
+    display:flex;flex-direction:column;justify-content:space-between}
+  .wrap::after{content:"";position:absolute;left:0;right:0;bottom:0;height:10px;
+    background:linear-gradient(90deg,var(--orange),#e07b43)}
+  .top{display:flex;align-items:center;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:16px}
+  .brand svg{width:60px;height:60px}
+  .brandname{font-family:'Instrument Serif',serif;font-size:40px;color:var(--ink)}
+  .site{font-family:'Geist';font-size:19px;color:var(--muted);letter-spacing:.01em}
+  .mid{max-width:1000px}
+  .tag{font-family:'Instrument Serif',serif;font-size:96px;line-height:1.02;color:var(--ink)}
+  .tag b{color:var(--orange);font-weight:400}
+  .sub{font-family:'Geist';font-weight:400;font-size:28px;color:var(--muted);margin-top:22px;max-width:880px;line-height:1.4}
+  .foot{display:flex;gap:10px}
+  .pill{font-family:'Geist';font-weight:500;font-size:18px;color:var(--ink);border:1.5px solid rgba(27,26,22,.18);border-radius:999px;padding:8px 18px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <svg viewBox="0 0 64 64" role="img" aria-label="Podium"><rect width="64" height="64" rx="16" fill="#1B1A16"/><rect x="9" y="28" width="15.5" height="27" rx="3" fill="#F5F1EA"/><path d="M27.5 18.8c0-1.2.8-2.2 2-2.5l10.5-2.2c1.6-.3 3.1.9 3.1 2.5V52c0 1.7-1.3 3-3 3h-9.6c-1.7 0-3-1.3-3-3V18.8Z" fill="#C9541F"/><rect x="45.5" y="33" width="14" height="22" rx="3" fill="#F5F1EA"/></svg>
+        <div class="brandname">Podium</div>
+      </div>
+      <div class="site">rmagdaleena2508-01.github.io/podium</div>
+    </div>
+    <div class="mid">
+      <div class="tag">Show your slides.<br><b>Win the room.</b></div>
+      <div class="sub">Teams post their pitch decks. People read them, people vote, and the best one wins — built for pitch competitions, hackathons and case contests.</div>
+    </div>
+    <div class="foot">
+      <div class="pill">Upload a deck</div>
+      <div class="pill">One vote each</div>
+      <div class="pill">Live results</div>
+    </div>
+  </div>
+</body>
+</html>
